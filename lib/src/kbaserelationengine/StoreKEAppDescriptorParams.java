@@ -1,5 +1,5 @@
 
-package kehomologyconnector;
+package kbaserelationengine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,33 +12,48 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: RunParams</p>
+ * <p>Original spec-file type: StoreKEAppDescriptorParams</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "genome_ws_ref"
+    "keapp"
 })
-public class RunParams {
+public class StoreKEAppDescriptorParams {
 
-    @JsonProperty("genome_ws_ref")
-    private String genomeWsRef;
+    /**
+     * <p>Original spec-file type: KEAppDescriptor</p>
+     * 
+     * 
+     */
+    @JsonProperty("keapp")
+    private KEAppDescriptor keapp;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("genome_ws_ref")
-    public String getGenomeWsRef() {
-        return genomeWsRef;
+    /**
+     * <p>Original spec-file type: KEAppDescriptor</p>
+     * 
+     * 
+     */
+    @JsonProperty("keapp")
+    public KEAppDescriptor getKeapp() {
+        return keapp;
     }
 
-    @JsonProperty("genome_ws_ref")
-    public void setGenomeWsRef(String genomeWsRef) {
-        this.genomeWsRef = genomeWsRef;
+    /**
+     * <p>Original spec-file type: KEAppDescriptor</p>
+     * 
+     * 
+     */
+    @JsonProperty("keapp")
+    public void setKeapp(KEAppDescriptor keapp) {
+        this.keapp = keapp;
     }
 
-    public RunParams withGenomeWsRef(String genomeWsRef) {
-        this.genomeWsRef = genomeWsRef;
+    public StoreKEAppDescriptorParams withKeapp(KEAppDescriptor keapp) {
+        this.keapp = keapp;
         return this;
     }
 
@@ -54,7 +69,7 @@ public class RunParams {
 
     @Override
     public String toString() {
-        return ((((("RunParams"+" [genomeWsRef=")+ genomeWsRef)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("StoreKEAppDescriptorParams"+" [keapp=")+ keapp)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

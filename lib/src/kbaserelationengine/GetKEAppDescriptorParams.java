@@ -1,5 +1,5 @@
 
-package kehomologyconnector;
+package kbaserelationengine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,33 +12,33 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: RunParams</p>
+ * <p>Original spec-file type: GetKEAppDescriptorParams</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "genome_ws_ref"
+    "app_guid"
 })
-public class RunParams {
+public class GetKEAppDescriptorParams {
 
-    @JsonProperty("genome_ws_ref")
-    private String genomeWsRef;
+    @JsonProperty("app_guid")
+    private String appGuid;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("genome_ws_ref")
-    public String getGenomeWsRef() {
-        return genomeWsRef;
+    @JsonProperty("app_guid")
+    public String getAppGuid() {
+        return appGuid;
     }
 
-    @JsonProperty("genome_ws_ref")
-    public void setGenomeWsRef(String genomeWsRef) {
-        this.genomeWsRef = genomeWsRef;
+    @JsonProperty("app_guid")
+    public void setAppGuid(String appGuid) {
+        this.appGuid = appGuid;
     }
 
-    public RunParams withGenomeWsRef(String genomeWsRef) {
-        this.genomeWsRef = genomeWsRef;
+    public GetKEAppDescriptorParams withAppGuid(String appGuid) {
+        this.appGuid = appGuid;
         return this;
     }
 
@@ -54,7 +54,7 @@ public class RunParams {
 
     @Override
     public String toString() {
-        return ((((("RunParams"+" [genomeWsRef=")+ genomeWsRef)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("GetKEAppDescriptorParams"+" [appGuid=")+ appGuid)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

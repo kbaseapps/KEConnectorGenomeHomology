@@ -121,7 +121,8 @@ sub new
 <pre>
 $params is a KEHomologyConnector.RunParams
 $return is a KEHomologyConnector.RunOutput
-RunParams is a reference to a hash where the following keys are defined
+RunParams is a reference to a hash where the following keys are defined:
+	genome_ws_ref has a value which is a string
 RunOutput is a reference to a hash where the following keys are defined
 
 </pre>
@@ -132,7 +133,8 @@ RunOutput is a reference to a hash where the following keys are defined
 
 $params is a KEHomologyConnector.RunParams
 $return is a KEHomologyConnector.RunOutput
-RunParams is a reference to a hash where the following keys are defined
+RunParams is a reference to a hash where the following keys are defined:
+	genome_ws_ref has a value which is a string
 RunOutput is a reference to a hash where the following keys are defined
 
 
@@ -292,14 +294,18 @@ sub _validate_version {
 =begin html
 
 <pre>
-a reference to a hash where the following keys are defined
+a reference to a hash where the following keys are defined:
+genome_ws_ref has a value which is a string
+
 </pre>
 
 =end html
 
 =begin text
 
-a reference to a hash where the following keys are defined
+a reference to a hash where the following keys are defined:
+genome_ws_ref has a value which is a string
+
 
 =end text
 

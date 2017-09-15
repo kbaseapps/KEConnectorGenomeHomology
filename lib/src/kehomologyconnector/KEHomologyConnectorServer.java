@@ -21,15 +21,17 @@ import us.kbase.common.service.RpcContext;
 public class KEHomologyConnectorServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
     private static final String version = "0.0.1";
-    private static final String gitUrl = "";
-    private static final String gitCommitHash = "";
+    private static final String gitUrl = "https://github.com/psnovichkov/KEHomologyConnector.git";
+    private static final String gitCommitHash = "9b572f1a238f5084732953033261d974292be437";
 
     //BEGIN_CLASS_HEADER
+    KEHomologyConnectorServerImpl impl;
     //END_CLASS_HEADER
 
     public KEHomologyConnectorServer() throws Exception {
         super("KEHomologyConnector");
         //BEGIN_CONSTRUCTOR
+        impl = new KEHomologyConnectorServerImpl();
         //END_CONSTRUCTOR
     }
 
@@ -44,6 +46,7 @@ public class KEHomologyConnectorServer extends JsonServerServlet {
     public RunOutput run(RunParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         RunOutput returnVal = null;
         //BEGIN run
+        returnVal = impl.run(params);
         //END run
         return returnVal;
     }
