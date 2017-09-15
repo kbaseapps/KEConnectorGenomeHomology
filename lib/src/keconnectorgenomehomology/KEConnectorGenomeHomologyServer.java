@@ -10,6 +10,7 @@ import us.kbase.common.service.JsonServerSyslog;
 import us.kbase.common.service.RpcContext;
 
 //BEGIN_HEADER
+import java.net.URL;
 //END_HEADER
 
 /**
@@ -25,13 +26,15 @@ public class KEConnectorGenomeHomologyServer extends JsonServerServlet {
     private static final String gitCommitHash = "";
 
     //BEGIN_CLASS_HEADER
-    KEConnectorGenomeHomologyServerImpl impl;
+    private KEConnectorGenomeHomologyServerImpl impl;
+    private URL wsUrl = null;
     //END_CLASS_HEADER
 
     public KEConnectorGenomeHomologyServer() throws Exception {
         super("KEConnectorGenomeHomology");
         //BEGIN_CONSTRUCTOR
         impl = new KEConnectorGenomeHomologyServerImpl();
+        wsUrl = new URL(config.get("workspace-url"));
         //END_CONSTRUCTOR
     }
 
@@ -46,7 +49,7 @@ public class KEConnectorGenomeHomologyServer extends JsonServerServlet {
     public RunOutput run(RunParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         RunOutput returnVal = null;
         //BEGIN run
-        returnVal = impl.run(params);
+        returnVal = impl.run(params, authPart, wsUrl);
         //END run
         return returnVal;
     }
