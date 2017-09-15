@@ -1,7 +1,10 @@
 package kehomologyconnector;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
@@ -11,11 +14,19 @@ import kbaserelationengine.GetFeatureSequencesParams;
 import kbaserelationengine.KBaseRelationEngineClient;
 import kehomologyconnector.util.BlastStarter;
 import kehomologyconnector.util.FastaWriter;
+import us.kbase.auth.AuthToken;
+import us.kbase.common.service.JsonClientException;
+import us.kbase.common.service.UnauthorizedException;
+import us.kbase.kbasegenomes.Feature;
+import us.kbase.kbasegenomes.Genome;
+import workspace.GetObjects2Params;
+import workspace.ObjectSpecification;
+import workspace.WorkspaceClient;
 
 public class KEHomologyConnectorServerImpl {
 	
 	private static final String TMP_DIR = null;
-	private static final String BLAST_BIN_PATH = "";
+	private static final String BLAST_BIN_PATH = "bin";
 	
 	private final String[] BASE_ORTHOLOG_GUIDS = new String[]{};
 	
@@ -28,8 +39,8 @@ public class KEHomologyConnectorServerImpl {
 	private final String BLAST_OUTPUT_2 = "";
 	
 	
-	public RunOutput run(RunParams params) throws Exception {
-		exportWSGenomeFasta(params.getGenomeWsRef(), SOURCE_GENOME);
+	public RunOutput run(RunParams params, AuthToken token, URL wsUrl) throws Exception {
+		exportWSGenomeFasta(params.getGenomeWsRef(), SOURCE_GENOME, token, wsUrl);
 		exportBaseOrthologFasta(SOURCE_GENOME);
 		formatDataBase(BASE_ORTHOLOG);
 		runBlastP(SOURCE_GENOME, BASE_ORTHOLOG, BLAST_OUTPUT_1);
@@ -120,11 +131,11 @@ public class KEHomologyConnectorServerImpl {
 		
 	}
 
-	private void exportReferenceGenomeFasta(String taxGuid, String targetName) {
+	private void exportReferenceGenomeFasta(String taxGuid, String targetName) 
+	        throws IOException, JsonClientException {
 		KBaseRelationEngineClient reClient = reClient();
 		List<FeatureSequence> sequences = reClient.getFeatureSequences(
-				new GetFeatureSequencesParams().withTaxonomyGuid(taxGuid), 
-				jsonRpcContext);
+				new GetFeatureSequencesParams().withTaxonomyGuid(taxGuid));
 		
 		String fileName = getFastaFileName(targetName);
 		FastaWriter fw = new FastaWriter(new File(fileName));
@@ -174,18 +185,34 @@ public class KEHomologyConnectorServerImpl {
 		
 	}
 
-	private void exportWSGenomeFasta(String genomeWsRef, String sourceName) {
+	private void exportWSGenomeFasta(String genomeWsRef, String sourceName, AuthToken token,
+	        URL wsUrl) throws IOException, JsonClientException {
+	    WorkspaceClient wsCl = new WorkspaceClient(wsUrl, token);
+	    wsCl.setAllSSLCertificatesTrusted(true);
+	    wsCl.setIsInsecureHttpConnectionAllowed(true);
 		String fileName = getFastaFileName(sourceName);
 		FastaWriter fw = new FastaWriter(new File(getFastaFileName(fileName)));
 		try{
-			// Get sequences
+			// Get genome
+		    Genome genome = wsCl.getObjects2(new GetObjects2Params().withObjects(
+		            Arrays.asList(new ObjectSpecification().withRef(genomeWsRef))))
+		            .getData().get(0).getData().asClassInstance(Genome.class);
 			// Iterate and write to fw
+		    for (Feature ft : genome.getFeatures()) {
+		        String id = ft.getId();
+		        String protSeq = ft.getProteinTranslation();
+		        if (protSeq == null) {
+		            continue;
+		        }
+		        fw.write(id, protSeq);
+		    }
 		}finally{
 			fw.close();	
 		}		
 	}
 
-	private void exportBaseOrthologFasta(String sourceName) {
+	private void exportBaseOrthologFasta(String sourceName) 
+	        throws IOException, JsonClientException {
 		KBaseRelationEngineClient reClient = reClient();
 
 		
@@ -194,8 +221,7 @@ public class KEHomologyConnectorServerImpl {
 		try{
 			for(String ortGuid: BASE_ORTHOLOG_GUIDS){
 				List<FeatureSequence> sequences = reClient.getFeatureSequences(
-						new GetFeatureSequencesParams().withOrthologGuid(ortGuid), 
-						jsonRpcContext);
+						new GetFeatureSequencesParams().withOrthologGuid(ortGuid));
 				
 				for(FeatureSequence seq: sequences){
 					fw.write(

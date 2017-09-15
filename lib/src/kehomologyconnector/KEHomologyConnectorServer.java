@@ -10,6 +10,7 @@ import us.kbase.common.service.JsonServerSyslog;
 import us.kbase.common.service.RpcContext;
 
 //BEGIN_HEADER
+import java.net.URL;
 //END_HEADER
 
 /**
@@ -26,12 +27,14 @@ public class KEHomologyConnectorServer extends JsonServerServlet {
 
     //BEGIN_CLASS_HEADER
     KEHomologyConnectorServerImpl impl;
+    private URL wsUrl = null;
     //END_CLASS_HEADER
 
     public KEHomologyConnectorServer() throws Exception {
         super("KEHomologyConnector");
         //BEGIN_CONSTRUCTOR
         impl = new KEHomologyConnectorServerImpl();
+        wsUrl = new URL(config.get("workspace-url"));
         //END_CONSTRUCTOR
     }
 
@@ -46,7 +49,7 @@ public class KEHomologyConnectorServer extends JsonServerServlet {
     public RunOutput run(RunParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         RunOutput returnVal = null;
         //BEGIN run
-        returnVal = impl.run(params);
+        returnVal = impl.run(params, authPart, wsUrl);
         //END run
         return returnVal;
     }
