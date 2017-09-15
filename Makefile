@@ -1,7 +1,7 @@
-SERVICE = kehomologyconnector
-SERVICE_CAPS = KEHomologyConnector
-SPEC_FILE = KEHomologyConnector.spec
-URL = https://kbase.us/services/kehomologyconnector
+SERVICE = keconnectorgenomehomology
+SERVICE_CAPS = KEConnectorGenomeHomology
+SPEC_FILE = KEConnectorGenomeHomology.spec
+URL = https://kbase.us/services/keconnectorgenomehomology
 DIR = $(shell pwd)
 LIB_DIR = lib
 SCRIPTS_DIR = scripts

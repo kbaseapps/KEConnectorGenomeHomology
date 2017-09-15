@@ -1,4 +1,4 @@
-package kehomologyconnector;
+package keconnectorgenomehomology;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -13,25 +13,25 @@ import us.kbase.common.service.RpcContext;
 //END_HEADER
 
 /**
- * <p>Original spec-file module name: KEHomologyConnector</p>
+ * <p>Original spec-file module name: KEConnectorGenomeHomology</p>
  * <pre>
  * A KBase module: KEHomologyConnector
  * </pre>
  */
-public class KEHomologyConnectorServer extends JsonServerServlet {
+public class KEConnectorGenomeHomologyServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
-    private static final String version = "0.0.1";
-    private static final String gitUrl = "https://github.com/psnovichkov/KEHomologyConnector.git";
-    private static final String gitCommitHash = "9b572f1a238f5084732953033261d974292be437";
+    private static final String version = "";
+    private static final String gitUrl = "";
+    private static final String gitCommitHash = "";
 
     //BEGIN_CLASS_HEADER
-    KEHomologyConnectorServerImpl impl;
+    KEConnectorGenomeHomologyServerImpl impl;
     //END_CLASS_HEADER
 
-    public KEHomologyConnectorServer() throws Exception {
-        super("KEHomologyConnector");
+    public KEConnectorGenomeHomologyServer() throws Exception {
+        super("KEConnectorGenomeHomology");
         //BEGIN_CONSTRUCTOR
-        impl = new KEHomologyConnectorServerImpl();
+        impl = new KEConnectorGenomeHomologyServerImpl();
         //END_CONSTRUCTOR
     }
 
@@ -39,10 +39,10 @@ public class KEHomologyConnectorServer extends JsonServerServlet {
      * <p>Original spec-file function name: run</p>
      * <pre>
      * </pre>
-     * @param   params   instance of type {@link kehomologyconnector.RunParams RunParams}
-     * @return   instance of type {@link kehomologyconnector.RunOutput RunOutput}
+     * @param   params   instance of type {@link keconnectorgenomehomology.RunParams RunParams}
+     * @return   instance of type {@link keconnectorgenomehomology.RunOutput RunOutput}
      */
-    @JsonServerMethod(rpc = "KEHomologyConnector.run", async=true)
+    @JsonServerMethod(rpc = "KEConnectorGenomeHomology.run", async=true)
     public RunOutput run(RunParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
         RunOutput returnVal = null;
         //BEGIN run
@@ -50,7 +50,7 @@ public class KEHomologyConnectorServer extends JsonServerServlet {
         //END run
         return returnVal;
     }
-    @JsonServerMethod(rpc = "KEHomologyConnector.status")
+    @JsonServerMethod(rpc = "KEConnectorGenomeHomology.status")
     public Map<String, Object> status() {
         Map<String, Object> returnVal = null;
         //BEGIN_STATUS
@@ -66,11 +66,11 @@ public class KEHomologyConnectorServer extends JsonServerServlet {
 
     public static void main(String[] args) throws Exception {
         if (args.length == 1) {
-            new KEHomologyConnectorServer().startupServer(Integer.parseInt(args[0]));
+            new KEConnectorGenomeHomologyServer().startupServer(Integer.parseInt(args[0]));
         } else if (args.length == 3) {
             JsonServerSyslog.setStaticUseSyslog(false);
             JsonServerSyslog.setStaticMlogFile(args[1] + ".log");
-            new KEHomologyConnectorServer().processRpcCall(new File(args[0]), new File(args[1]), args[2]);
+            new KEConnectorGenomeHomologyServer().processRpcCall(new File(args[0]), new File(args[1]), args[2]);
         } else {
             System.out.println("Usage: <program> <server_port>");
             System.out.println("   or: <program> <context_json_file> <output_json_file> <token>");

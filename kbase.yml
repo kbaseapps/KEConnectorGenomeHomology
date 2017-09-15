@@ -1,5 +1,5 @@
 module-name:
-    KEHomologyConnector
+    KEConnectorGenomeHomology
 
 module-description:
     A KBase module

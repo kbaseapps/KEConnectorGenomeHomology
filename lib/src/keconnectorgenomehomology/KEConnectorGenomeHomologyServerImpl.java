@@ -1,4 +1,4 @@
-package kehomologyconnector;
+package keconnectorgenomehomology;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,10 +9,10 @@ import java.util.Map.Entry;
 import kbaserelationengine.FeatureSequence;
 import kbaserelationengine.GetFeatureSequencesParams;
 import kbaserelationengine.KBaseRelationEngineClient;
-import kehomologyconnector.util.BlastStarter;
-import kehomologyconnector.util.FastaWriter;
+import keconnectorgenomehomology.util.BlastStarter;
+import keconnectorgenomehomology.util.FastaWriter;
 
-public class KEHomologyConnectorServerImpl {
+public class KEConnectorGenomeHomologyServerImpl {
 	
 	private static final String TMP_DIR = null;
 	private static final String BLAST_BIN_PATH = "";

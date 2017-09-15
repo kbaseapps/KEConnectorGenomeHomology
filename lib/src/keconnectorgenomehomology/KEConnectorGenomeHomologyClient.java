@@ -1,4 +1,4 @@
-package kehomologyconnector;
+package keconnectorgenomehomology;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
@@ -14,12 +14,12 @@ import us.kbase.common.service.RpcContext;
 import us.kbase.common.service.UnauthorizedException;
 
 /**
- * <p>Original spec-file module name: KEHomologyConnector</p>
+ * <p>Original spec-file module name: KEConnectorGenomeHomology</p>
  * <pre>
  * A KBase module: KEHomologyConnector
  * </pre>
  */
-public class KEHomologyConnectorClient {
+public class KEConnectorGenomeHomologyClient {
     private JsonClientCaller caller;
     private String serviceVersion = null;
 
@@ -27,7 +27,7 @@ public class KEHomologyConnectorClient {
     /** Constructs a client with a custom URL and no user credentials.
      * @param url the URL of the service.
      */
-    public KEHomologyConnectorClient(URL url) {
+    public KEConnectorGenomeHomologyClient(URL url) {
         caller = new JsonClientCaller(url);
     }
     /** Constructs a client with a custom URL.
@@ -37,7 +37,7 @@ public class KEHomologyConnectorClient {
      * @throws IOException if an IOException occurs when checking the token's
      * validity.
      */
-    public KEHomologyConnectorClient(URL url, AuthToken token) throws UnauthorizedException, IOException {
+    public KEConnectorGenomeHomologyClient(URL url, AuthToken token) throws UnauthorizedException, IOException {
         caller = new JsonClientCaller(url, token);
     }
 
@@ -49,7 +49,7 @@ public class KEHomologyConnectorClient {
      * @throws IOException if an IOException occurs when checking the user's
      * credentials.
      */
-    public KEHomologyConnectorClient(URL url, String user, String password) throws UnauthorizedException, IOException {
+    public KEConnectorGenomeHomologyClient(URL url, String user, String password) throws UnauthorizedException, IOException {
         caller = new JsonClientCaller(url, user, password);
     }
 
@@ -63,7 +63,7 @@ public class KEHomologyConnectorClient {
      * @throws IOException if an IOException occurs when checking the user's
      * credentials.
      */
-    public KEHomologyConnectorClient(URL url, String user, String password, URL auth) throws UnauthorizedException, IOException {
+    public KEConnectorGenomeHomologyClient(URL url, String user, String password, URL auth) throws UnauthorizedException, IOException {
         caller = new JsonClientCaller(url, user, password, auth);
     }
 
@@ -166,8 +166,8 @@ public class KEHomologyConnectorClient {
      * <p>Original spec-file function name: run</p>
      * <pre>
      * </pre>
-     * @param   params   instance of type {@link kehomologyconnector.RunParams RunParams}
-     * @return   instance of type {@link kehomologyconnector.RunOutput RunOutput}
+     * @param   params   instance of type {@link keconnectorgenomehomology.RunParams RunParams}
+     * @return   instance of type {@link keconnectorgenomehomology.RunOutput RunOutput}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
@@ -175,14 +175,14 @@ public class KEHomologyConnectorClient {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
         TypeReference<List<RunOutput>> retType = new TypeReference<List<RunOutput>>() {};
-        List<RunOutput> res = caller.jsonrpcCall("KEHomologyConnector.run", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        List<RunOutput> res = caller.jsonrpcCall("KEConnectorGenomeHomology.run", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 
     public Map<String, Object> status(RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         TypeReference<List<Map<String, Object>>> retType = new TypeReference<List<Map<String, Object>>>() {};
-        List<Map<String, Object>> res = caller.jsonrpcCall("KEHomologyConnector.status", args, retType, true, false, jsonRpcContext, this.serviceVersion);
+        List<Map<String, Object>> res = caller.jsonrpcCall("KEConnectorGenomeHomology.status", args, retType, true, false, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 }
