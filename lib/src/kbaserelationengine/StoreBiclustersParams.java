@@ -1,7 +1,8 @@
 
-package kehomologyconnector;
+package kbaserelationengine;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -12,33 +13,33 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * <p>Original spec-file type: RunParams</p>
+ * <p>Original spec-file type: StoreBiclustersParams</p>
  * 
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "genome_ws_ref"
+    "biclusters"
 })
-public class RunParams {
+public class StoreBiclustersParams {
 
-    @JsonProperty("genome_ws_ref")
-    private String genomeWsRef;
+    @JsonProperty("biclusters")
+    private List<Bicluster> biclusters;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("genome_ws_ref")
-    public String getGenomeWsRef() {
-        return genomeWsRef;
+    @JsonProperty("biclusters")
+    public List<Bicluster> getBiclusters() {
+        return biclusters;
     }
 
-    @JsonProperty("genome_ws_ref")
-    public void setGenomeWsRef(String genomeWsRef) {
-        this.genomeWsRef = genomeWsRef;
+    @JsonProperty("biclusters")
+    public void setBiclusters(List<Bicluster> biclusters) {
+        this.biclusters = biclusters;
     }
 
-    public RunParams withGenomeWsRef(String genomeWsRef) {
-        this.genomeWsRef = genomeWsRef;
+    public StoreBiclustersParams withBiclusters(List<Bicluster> biclusters) {
+        this.biclusters = biclusters;
         return this;
     }
 
@@ -54,7 +55,7 @@ public class RunParams {
 
     @Override
     public String toString() {
-        return ((((("RunParams"+" [genomeWsRef=")+ genomeWsRef)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((("StoreBiclustersParams"+" [biclusters=")+ biclusters)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

@@ -35,7 +35,8 @@ class KEHomologyConnector(object):
 
     def run(self, params, context=None):
         """
-        :param params: instance of type "RunParams" -> structure:
+        :param params: instance of type "RunParams" -> structure: parameter
+           "genome_ws_ref" of String
         :returns: instance of type "RunOutput" -> structure:
         """
         return self._client.call_method(
