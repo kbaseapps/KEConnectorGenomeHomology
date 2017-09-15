@@ -1,4 +1,4 @@
-package kehomologyconnector.util;
+package keconnectorgenomehomology.util;
 
 import java.io.*;
 
