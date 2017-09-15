@@ -1,4 +1,4 @@
-package kehomologyconnector;
+package keconnectorgenomehomology;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,18 +12,17 @@ import java.util.Map.Entry;
 import kbaserelationengine.FeatureSequence;
 import kbaserelationengine.GetFeatureSequencesParams;
 import kbaserelationengine.KBaseRelationEngineClient;
-import kehomologyconnector.util.BlastStarter;
-import kehomologyconnector.util.FastaWriter;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientException;
-import us.kbase.common.service.UnauthorizedException;
 import us.kbase.kbasegenomes.Feature;
 import us.kbase.kbasegenomes.Genome;
 import workspace.GetObjects2Params;
 import workspace.ObjectSpecification;
 import workspace.WorkspaceClient;
+import keconnectorgenomehomology.util.BlastStarter;
+import keconnectorgenomehomology.util.FastaWriter;
 
-public class KEHomologyConnectorServerImpl {
+public class KEConnectorGenomeHomologyServerImpl {
 	
 	private static final String TMP_DIR = null;
 	private static final String BLAST_BIN_PATH = "bin";

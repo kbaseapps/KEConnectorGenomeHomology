@@ -15,7 +15,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import kehomologyconnector.KEHomologyConnectorServer;
+import keconnectorgenomehomology.KEConnectorGenomeHomologyServer;
 import us.kbase.auth.AuthConfig;
 import us.kbase.auth.AuthToken;
 import us.kbase.auth.ConfigurableAuthService;
@@ -32,7 +32,7 @@ public class KEHomologyConnectorServerTest {
     private static Map<String, String> config = null;
     private static WorkspaceClient wsClient = null;
     private static String wsName = null;
-    private static KEHomologyConnectorServer impl = null;
+    private static KEConnectorGenomeHomologyServer impl = null;
     private static Path scratch;
     private static URL callbackURL;
     
@@ -42,7 +42,7 @@ public class KEHomologyConnectorServerTest {
         String configFilePath = System.getenv("KB_DEPLOYMENT_CONFIG");
         File deploy = new File(configFilePath);
         Ini ini = new Ini(deploy);
-        config = ini.get("KEHomologyConnector");
+        config = ini.get("KEConnectorGenomeHomology");
         // Token validation
         String authUrl = config.get("auth-service-url");
         String authUrlInsecure = config.get("auth-service-url-allow-insecure");
@@ -59,13 +59,13 @@ public class KEHomologyConnectorServerTest {
         JsonServerSyslog.setStaticUseSyslog(false);
         JsonServerSyslog.setStaticMlogFile(new File(config.get("scratch"), "test.log")
             .getAbsolutePath());
-        impl = new KEHomologyConnectorServer();
+        impl = new KEConnectorGenomeHomologyServer();
     }
     
     private static String getWsName() throws Exception {
         if (wsName == null) {
             long suffix = System.currentTimeMillis();
-            wsName = "test_KEHomologyConnector_" + suffix;
+            wsName = "test_KEConnectorGenomeHomology_" + suffix;
             wsClient.createWorkspace(new CreateWorkspaceParams().withWorkspace(wsName));
         }
         return wsName;
@@ -73,7 +73,7 @@ public class KEHomologyConnectorServerTest {
     
     private static RpcContext getContext() {
         return new RpcContext().withProvenance(Arrays.asList(new ProvenanceAction()
-            .withService("KEHomologyConnector").withMethod("please_never_use_it_in_production")
+            .withService("KEConnectorGenomeHomology").withMethod("please_never_use_it_in_production")
             .withMethodParams(new ArrayList<UObject>())));
     }
     
