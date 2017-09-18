@@ -51,9 +51,9 @@ public class KEConnectorGenomeHomologyServerImpl {
 		long timeStart = System.currentTimeMillis();
 		
 //		System.out.print("Loading genome...");
-//		Genome wsGenome = getWSGenome(params.getGenomeWsRef(), token);
-//		Map<String,String> wsProteome = toProteome(wsGenome);
-		Map<String,String> wsProteome = loadTestFasta(params.getGenomeWsRef());
+		Genome wsGenome = getWSGenome(params.getGenomeWsRef(), token);
+		Map<String,String> wsProteome = toProteome(wsGenome);
+//		Map<String,String> wsProteome = loadTestFasta(params.getGenomeWsRef());
 //		System.out.println("Done! " + wsProteome.size());
 		
 		
@@ -79,7 +79,7 @@ public class KEConnectorGenomeHomologyServerImpl {
 		List<Hit> bbhs = bbhFinder.getBBHs();
 //		System.out.println("Done");		
 		
-		storeBBHs(bbhs, params);
+//		storeBBHs(bbhs, params);
 
 		long timeRun = (System.currentTimeMillis() - timeStart)/1000;
 		System.out.println( params.getGenomeWsRef()
@@ -288,14 +288,14 @@ public class KEConnectorGenomeHomologyServerImpl {
 		String token = System.getenv("token");
 		String user = System.getenv("user");
 		
-//		impl.run(new RunParams().withGenomeWsRef("25582/2/1"), new AuthToken(token, user));
-		File rootDir = new File("/kb/module/work/tmp/");
-		for(File file: rootDir.listFiles()){
-			if(file.getName().endsWith("faa")){
-				impl.run(new RunParams().withGenomeWsRef(file.getAbsolutePath()), 
-						new AuthToken(token, user));						
-			}
-		}
+		impl.run(new RunParams().withGenomeWsRef("25582/2/1"), new AuthToken(token, user));
+//		File rootDir = new File("/kb/module/work/tmp/");
+//		for(File file: rootDir.listFiles()){
+//			if(file.getName().endsWith("faa")){
+//				impl.run(new RunParams().withGenomeWsRef(file.getAbsolutePath()), 
+//						new AuthToken(token, user));						
+//			}
+//		}
 		
 	}
 	
