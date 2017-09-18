@@ -1,4 +1,8 @@
 [ {
+  "module_name" : "KBaseGenomes",
+  "type" : "core",
+  "file_path" : "./KBaseGenomes.spec"
+}, {
   "module_name" : "KBaseRelationEngine",
   "type" : "sdk",
   "version_tag" : "release"
