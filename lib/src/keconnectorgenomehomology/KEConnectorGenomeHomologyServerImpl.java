@@ -38,50 +38,56 @@ public class KEConnectorGenomeHomologyServerImpl {
 	
 	private static final String MAX_EVALUE = "" + 1.0e-10;
 		
-	private final String[] BASE_ORTHOLOG_GUIDS = new String[]{"KBaseHgp54930"};
+	private final String[] BASE_ORTHOLOG_GUIDS = new String[]{"KBHgp746131","KBHgp779288"};
 		
     public KEConnectorGenomeHomologyServerImpl(Map<String, String> config) throws MalformedURLException {
     	tmpDir = new File(config.get("scratch"));
         wsUrl = new URL(config.get("workspace-url"));
         srvWizUrl = new URL(config.get("srv-wiz-url"));
 	}	
-	
+	    
 	public RunOutput run(RunParams params, AuthToken token) throws Exception {	
 
 		long timeStart = System.currentTimeMillis();
 		
-		System.out.print("Loading genome...");
+//		System.out.print("Loading genome...");
 //		Genome wsGenome = getWSGenome(params.getGenomeWsRef(), token);
 //		Map<String,String> wsProteome = toProteome(wsGenome);
 		Map<String,String> wsProteome = loadTestFasta(params.getGenomeWsRef());
-		System.out.println("Done! " + wsProteome.size());
+//		System.out.println("Done! " + wsProteome.size());
 		
 		
-		System.out.print("Loading base orthologs...");
+//		System.out.print("Loading base orthologs...");
 		Map<String,String> baseOrtologs = getBaseOrtohlogs(token);
-		System.out.println("Done  " + baseOrtologs.size());				
+//		System.out.println("Done  " + baseOrtologs.size());				
 		
-		System.out.print("Doing blastp...");
+//		System.out.print("Doing blastp...");
 		ClosestGenomeFinder taxFinder = new ClosestGenomeFinder();
 		BlastStarter.run(tmpDir, wsProteome, baseOrtologs, blastBinDir, MAX_EVALUE, taxFinder);
-		System.out.println("Done");		
+//		System.out.println("Done");		
 
 		String taxGuid = taxFinder.getBestTaxGuid();
-		System.out.println("taxGuid = " + taxGuid);
+//		System.out.println("taxGuid = " + taxGuid);
 		
-		System.out.print("Loading ref proteome...");		
+//		System.out.print("Loading ref proteome...");		
 		Map<String,String> refProteome = getRefProteome(taxGuid, token);
-		System.out.println("Done  " + refProteome.size());				
+//		System.out.println("Done  " + refProteome.size());				
 		
-		System.out.print("Doing blastp...");		
+//		System.out.print("Doing blastp...");		
 		BBHsFinder bbhFinder = new BBHsFinder();
 		BlastStarter.run(tmpDir, wsProteome, refProteome, blastBinDir, MAX_EVALUE, bbhFinder);
-		List<BBH> bbhs = bbhFinder.getBBHs();
-		System.out.println("Done");		
+		List<Hit> bbhs = bbhFinder.getBBHs();
+//		System.out.println("Done");		
 		
 		storeBBHs(bbhs, params);
-		
-		System.out.println( (System.currentTimeMillis() - timeStart)/1000 );
+
+		long timeRun = (System.currentTimeMillis() - timeStart)/1000;
+		System.out.println( params.getGenomeWsRef()
+				+ "\ttime=" + timeRun
+				+ "\ttaxGuid=" + taxFinder.getBestTaxGuid() 
+				+ "\tident=" + taxFinder.bestHit.ident
+				+"\tfeature_count=" + wsProteome.size()
+				+"\tbbhs_count=" + bbhs.size());
 
 		return new RunOutput();
 	}
@@ -100,11 +106,16 @@ public class KEConnectorGenomeHomologyServerImpl {
 		return proteome;
 	}
 
-	private void storeBBHs(List<BBH> bbhs, RunParams params) throws IOException {
+	private void storeBBHs(List<Hit> bbhs, RunParams params) throws IOException {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(params.getGenomeWsRef() + ".bbhs"));
 		try{
-			for(BBH bbh: bbhs){
-				bw.write(bbh.qGuid + "\t" + bbh.tGuid + "\t" + bbh.bitScore + "\n");
+			for(Hit bbh: bbhs){
+				bw.write(bbh.qname 
+						+ "\t" + bbh.tname 
+						+ "\t" + bbh.ident
+						+ "\t" + bbh.qstart
+						+ "\t" + bbh.qend
+						+ "\t" + bbh.bitScore + "\n");
 			}			
 		} finally{
 			bw.close();
@@ -154,23 +165,19 @@ public class KEConnectorGenomeHomologyServerImpl {
 	}
 	
 	class ClosestGenomeFinder implements BlastStarter.ResultCallback{
-		double maxBitScore = 0;
-		String bestTName = "";
-		double bestIdentity = 0;
+		Hit bestHit = new Hit();
 		
 		@Override
 		public void proteinPair(String qname, String tname, double ident, int alnLen, int mismatch, int gapopens,
 				int qstart, int qend, int tstart, int tend, String eval, double bitScore) {
 
-			if(bitScore > maxBitScore){
-				maxBitScore = bitScore;
-				bestTName = tname;
-				bestIdentity = ident;
+			if(bitScore > bestHit.bitScore){
+				bestHit.setHit(qname, tname, bitScore, ident, qstart, qend);
 			}
 		}
 		
 		public String getBestTaxGuid(){
-			return bestTName.split("\\|")[2].trim();
+			return bestHit.tname.split("\\|")[2].trim();
 		}
 	}	
 	
@@ -188,67 +195,81 @@ public class KEConnectorGenomeHomologyServerImpl {
 		return id2seq;		
 	}	
 	
-	class BestHit{
-		String guid;
-		double bitScore;
-		public BestHit(String guid, double bitScore) {
-			setHit(guid, bitScore);
+	class Hit{
+		
+		String qname;
+		String tname;
+		double bitScore;		
+		double ident;
+		int qstart;
+		int qend;
+		
+		public Hit(){};
+		public Hit(String qname, String tname, double bitScore, double ident, int qstart, int qend) {
+			super();
+			setHit(qname, tname, bitScore, ident, qstart, qend);
 		}
-		public void setHit(String guid, double bitScore){
-			this.guid = guid;
-			this.bitScore = bitScore;			
-		}
-	}
-	class BBH{
-		String qGuid;
-		String tGuid;
-		double bitScore;
-		public BBH(String qGuid, String tGuid, double bitScore) {
-			this.qGuid = qGuid;
-			this.tGuid = tGuid;
+
+		public void setHit(String qname, String tname, double bitScore, double ident, int qstart, int qend) {
+			this.qname = qname;
+			this.tname = tname;
 			this.bitScore = bitScore;
+			this.ident = ident;
+			this.qstart = qstart;
+			this.qend = qend;
+		}						
+	}	
+	
+	class PartnerScore{
+		String name;
+		double bitScore;
+		public PartnerScore(String name, double bitScore) {
+			set(name, bitScore);
 		}
+		public void set(String name, double bitScore) {
+			this.name = name;
+			this.bitScore = bitScore;
+		}		
 	}
 	
 	class BBHsFinder implements BlastStarter.ResultCallback{
-		Hashtable<String, BestHit> q2t = new Hashtable<String, BestHit>();
-		Hashtable<String, BestHit> t2q = new Hashtable<String, BestHit>();
+		Hashtable<String, Hit> q2t = new Hashtable<String, Hit>();
+		Hashtable<String, PartnerScore> t2q = new Hashtable<String, PartnerScore>();
 				
 		@Override
 		public void proteinPair(String qname, String tname, double ident, int alnLen, int mismatch, int gapopens,
 				int qstart, int qend, int tstart, int tend, String eval, double bitScore) {
-			BestHit hit;
 			
 			// Do q2t
-			hit = q2t.get(qname);
+			Hit hit = q2t.get(qname);
 			if(hit == null){
-				hit = new BestHit(tname,0);
+				hit = new Hit(qname, tname, bitScore, ident, qstart, qend);
 				q2t.put(qname, hit);
 			}
 			if(bitScore > hit.bitScore){
-				hit.setHit(tname, bitScore);
+				hit.setHit(qname, tname, bitScore, ident, qstart, qend);
 			}
 			
 			// Do t2q
-			hit = t2q.get(tname);
-			if(hit == null){
-				hit = new BestHit(qname,0);
-				t2q.put(tname, hit);
+			PartnerScore ps = t2q.get(tname);
+			if(ps == null){
+				ps = new PartnerScore(qname, bitScore);
+				t2q.put(tname, ps);
 			}
-			if(bitScore > hit.bitScore){
-				hit.setHit(qname, bitScore);
+			if(bitScore > ps.bitScore){
+				ps.set(qname, bitScore);
 			}			
 		}	
 		
-		public List<BBH> getBBHs(){
-			List<BBH> bbhs = new ArrayList<BBH>();
+		public List<Hit> getBBHs(){
+			List<Hit> bbhs = new ArrayList<Hit>();
 			
-			for(Entry<String, BestHit> entry :q2t.entrySet()){
-				String qGuid = entry.getKey();
-				String tGuid = entry.getValue().guid;
-				BestHit hit = t2q.get(tGuid);
-				if(hit != null && hit.guid.equals(qGuid)){
-					bbhs.add(new BBH(qGuid,tGuid,hit.bitScore));
+			for(Entry<String, Hit> entry :q2t.entrySet()){
+				String qname = entry.getKey();
+				Hit hit = entry.getValue();
+				PartnerScore ps = t2q.get(hit.tname);
+				if(ps != null && ps.name.equals(qname)){
+					bbhs.add(hit);
 				}
 			}
 			return bbhs;
@@ -267,8 +288,15 @@ public class KEConnectorGenomeHomologyServerImpl {
 		String token = System.getenv("token");
 		String user = System.getenv("user");
 		
-//		impl.run(new RunParams().withGenomeWsRef("25582/2/1"), new AuthToken(token, user));		
-		impl.run(new RunParams().withGenomeWsRef("/kb/module/work/tmp/organism_Miya.faa"), new AuthToken(token, user));		
+//		impl.run(new RunParams().withGenomeWsRef("25582/2/1"), new AuthToken(token, user));
+		File rootDir = new File("/kb/module/work/tmp/");
+		for(File file: rootDir.listFiles()){
+			if(file.getName().endsWith("faa")){
+				impl.run(new RunParams().withGenomeWsRef(file.getAbsolutePath()), 
+						new AuthToken(token, user));						
+			}
+		}
+		
 	}
 	
 }
