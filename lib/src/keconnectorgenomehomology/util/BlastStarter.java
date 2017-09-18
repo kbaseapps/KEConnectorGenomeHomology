@@ -54,32 +54,6 @@ public class BlastStarter {
 		return ret;
 	}
 	
-	public static void makeblastdb(File blastBin, File databaseFile, File tempDir){
-		CorrectProcess cp = null;
-		ByteArrayOutputStream err_baos = null;
-		Exception err = null;
-		String binPath = blastBin == null ? "" : (blastBin.getAbsolutePath() + "/");
-		try {
-			Process p = Runtime.getRuntime().exec(CorrectProcess.arr(binPath + "makeblastdb", 
-					"-dbtype", "prot", "-in", databaseFile.getAbsolutePath()));
-			err_baos = new ByteArrayOutputStream();
-			cp = new CorrectProcess(p,new ByteArrayOutputStream(),"",err_baos,"");
-			p.waitFor();
-			err_baos.close();
-		}catch(Exception ex) {
-			try{ err_baos.close(); }catch(Exception ex_) {}
-			try{ if(cp!=null)cp.destroy(); }catch(Exception ex_) {}
-			err = ex;
-		}
-		if(err_baos!=null) {
-			String err_text = new String(err_baos.toByteArray());
-			if(err_text.length()>0)
-				err = new Exception("makeblastdb: "+err_text,err);
-		}		
-	}
-	
-	
-	
 	private static void runBlast(File blastBin, File queryFile, File databaseFile, 
 			File tempDir, String maxEvalue, ResultCallback ret) throws Exception {
 		File tempResFile = new File(tempDir, "tmp_result_" + generateTimestmap() + ".txt");
@@ -141,7 +115,7 @@ public class BlastStarter {
 		}
 	}
 	
-	public static void loadData(File f, ResultCallback ret) throws Exception {
+	private static void loadData(File f, ResultCallback ret) throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		while (true) {
 			String l = br.readLine();
