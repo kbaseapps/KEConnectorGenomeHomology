@@ -1,7 +1,7 @@
 [ {
   "module_name" : "KBaseRelationEngine",
-  "type" : "core",
-  "file_path" : "https://raw.githubusercontent.com/kbase/KBaseRelationEngine/master/KBaseRelationEngine.spec"
+  "type" : "sdk",
+  "version_tag" : "release"
 }, {
   "module_name" : "Workspace",
   "type" : "core",
