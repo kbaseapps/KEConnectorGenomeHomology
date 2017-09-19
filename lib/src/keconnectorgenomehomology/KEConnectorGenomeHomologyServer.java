@@ -20,9 +20,9 @@ import us.kbase.common.service.RpcContext;
  */
 public class KEConnectorGenomeHomologyServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
-    private static final String version = "";
-    private static final String gitUrl = "";
-    private static final String gitCommitHash = "";
+    private static final String version = "0.0.1";
+    private static final String gitUrl = "https://github.com/psnovichkov/KEConnectorGenomeHomology.git";
+    private static final String gitCommitHash = "75be75f95d669b52a7d9201feaf808a3fc131b36";
 
     //BEGIN_CLASS_HEADER
     private KEConnectorGenomeHomologyServerImpl impl;

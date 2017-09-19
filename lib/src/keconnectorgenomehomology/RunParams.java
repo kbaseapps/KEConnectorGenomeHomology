@@ -19,26 +19,44 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "genome_ws_ref"
+    "app_guid",
+    "obj_ref"
 })
 public class RunParams {
 
-    @JsonProperty("genome_ws_ref")
-    private String genomeWsRef;
+    @JsonProperty("app_guid")
+    private String appGuid;
+    @JsonProperty("obj_ref")
+    private String objRef;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("genome_ws_ref")
-    public String getGenomeWsRef() {
-        return genomeWsRef;
+    @JsonProperty("app_guid")
+    public String getAppGuid() {
+        return appGuid;
     }
 
-    @JsonProperty("genome_ws_ref")
-    public void setGenomeWsRef(String genomeWsRef) {
-        this.genomeWsRef = genomeWsRef;
+    @JsonProperty("app_guid")
+    public void setAppGuid(String appGuid) {
+        this.appGuid = appGuid;
     }
 
-    public RunParams withGenomeWsRef(String genomeWsRef) {
-        this.genomeWsRef = genomeWsRef;
+    public RunParams withAppGuid(String appGuid) {
+        this.appGuid = appGuid;
+        return this;
+    }
+
+    @JsonProperty("obj_ref")
+    public String getObjRef() {
+        return objRef;
+    }
+
+    @JsonProperty("obj_ref")
+    public void setObjRef(String objRef) {
+        this.objRef = objRef;
+    }
+
+    public RunParams withObjRef(String objRef) {
+        this.objRef = objRef;
         return this;
     }
 
@@ -54,7 +72,7 @@ public class RunParams {
 
     @Override
     public String toString() {
-        return ((((("RunParams"+" [genomeWsRef=")+ genomeWsRef)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((("RunParams"+" [appGuid=")+ appGuid)+", objRef=")+ objRef)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }
