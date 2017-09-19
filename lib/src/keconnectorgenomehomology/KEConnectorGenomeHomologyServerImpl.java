@@ -13,16 +13,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import kbaserelationengine.ConnectWSFeatures2RefOrthologsParams;
 import kbaserelationengine.FeatureSequence;
 import kbaserelationengine.GetFeatureSequencesParams;
 import kbaserelationengine.KBaseRelationEngineServiceClient;
+import kbaserelationengine.StoreWSGenomeParams;
 import keconnectorgenomehomology.util.BlastStarter;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UnauthorizedException;
 import us.kbase.common.utils.FastaReader;
-import us.kbase.kbasegenomes.Feature;
-import us.kbase.kbasegenomes.Genome;
+import kbasegenomes.Feature;
+import kbasegenomes.Genome;
 import workspace.GetObjects2Params;
 import workspace.ObjectSpecification;
 import workspace.WorkspaceClient;
@@ -33,10 +35,10 @@ public class KEConnectorGenomeHomologyServerImpl {
     private URL srvWizUrl = null;
 	
 	private File tmpDir = null;
-//	private File blastBinDir = new File("bin");
-	private File blastBinDir = new File("/kb/deps/ncbi-blast-2.2.29+/bin/");
+	private File blastBinDir = new File("bin");
+//	private File blastBinDir = new File("/kb/deps/ncbi-blast-2.2.29+/bin/");
 	
-	private static final String MAX_EVALUE = "" + 1.0e-10;
+	private static final String MAX_EVALUE = "" + 1.0e-5;
 		
 	private final String[] BASE_ORTHOLOG_GUIDS = new String[]{"KBHgp746131","KBHgp779288"};
 		
@@ -50,39 +52,42 @@ public class KEConnectorGenomeHomologyServerImpl {
 
 		long timeStart = System.currentTimeMillis();
 		
-//		System.out.print("Loading genome...");
-		Genome wsGenome = getWSGenome(params.getGenomeWsRef(), token);
+		System.out.print("Loading genome...");
+		Genome wsGenome = getWSGenome(params.getObjRef(), token);
 		Map<String,String> wsProteome = toProteome(wsGenome);
 //		Map<String,String> wsProteome = loadTestFasta(params.getGenomeWsRef());
-//		System.out.println("Done! " + wsProteome.size());
-		
-		
-//		System.out.print("Loading base orthologs...");
+		System.out.println("Done! " + wsProteome.size());
+				
+		System.out.print("Loading base orthologs...");
 		Map<String,String> baseOrtologs = getBaseOrtohlogs(token);
-//		System.out.println("Done  " + baseOrtologs.size());				
+		System.out.println("Done  " + baseOrtologs.size());				
 		
-//		System.out.print("Doing blastp...");
+		System.out.print("Doing blastp...");
 		ClosestGenomeFinder taxFinder = new ClosestGenomeFinder();
 		BlastStarter.run(tmpDir, wsProteome, baseOrtologs, blastBinDir, MAX_EVALUE, taxFinder);
-//		System.out.println("Done");		
+		System.out.println("Done");		
 
 		String taxGuid = taxFinder.getBestTaxGuid();
-//		System.out.println("taxGuid = " + taxGuid);
+		System.out.println("taxGuid = " + taxGuid);
 		
-//		System.out.print("Loading ref proteome...");		
+		System.out.print("Loading ref proteome...");		
 		Map<String,String> refProteome = getRefProteome(taxGuid, token);
-//		System.out.println("Done  " + refProteome.size());				
+		System.out.println("Done  " + refProteome.size());				
 		
-//		System.out.print("Doing blastp...");		
+		System.out.print("Doing blastp...");		
 		BBHsFinder bbhFinder = new BBHsFinder();
 		BlastStarter.run(tmpDir, wsProteome, refProteome, blastBinDir, MAX_EVALUE, bbhFinder);
 		List<Hit> bbhs = bbhFinder.getBBHs();
-//		System.out.println("Done");		
+		System.out.println("Done");		
+		
+		// Storing results in RE
+		storeWSGenome(params.getObjRef(), wsGenome, token);
+		storeBBHs(params.getObjRef(), bbhs, token);
 		
 //		storeBBHs(bbhs, params);
 
 		long timeRun = (System.currentTimeMillis() - timeStart)/1000;
-		System.out.println( params.getGenomeWsRef()
+		System.out.println( params.getObjRef()
 				+ "\ttime=" + timeRun
 				+ "\ttaxGuid=" + taxFinder.getBestTaxGuid() 
 				+ "\tident=" + taxFinder.bestHit.ident
@@ -90,6 +95,35 @@ public class KEConnectorGenomeHomologyServerImpl {
 				+"\tbbhs_count=" + bbhs.size());
 
 		return new RunOutput();
+	}
+
+	private void storeBBHs(String objRef, List<Hit> bbhs, AuthToken token) throws IOException, JsonClientException {
+		KBaseRelationEngineServiceClient reClient = reClient(token);	
+		
+		Map<String,String> ws2refFeatureGuids = new Hashtable<String,String>();
+		for(Hit hit: bbhs){
+			ws2refFeatureGuids.put(wsFeatureId2GUID(objRef, hit.qname), hit.tname );
+		}
+		
+		reClient.connectWSFeatures2RefOrthologs(new ConnectWSFeatures2RefOrthologsParams()
+				.withWs2refFeatureGuids(ws2refFeatureGuids));
+	}
+
+	private static String wsFeatureId2GUID(String objRef, String featureId){
+		return "ws:" + objRef + ":feature/"  + featureId;
+	}
+	
+	private void storeWSGenome(String objRef, Genome wsGenome, AuthToken token) throws IOException, JsonClientException {
+		KBaseRelationEngineServiceClient reClient = reClient(token);		
+		StoreWSGenomeParams params = new StoreWSGenomeParams();
+		params.withGenomeRef(objRef);
+		List<String> featureGuids = new ArrayList<String>();
+	    for (Feature ft : wsGenome.getFeatures()) {
+	        String fguid = wsFeatureId2GUID(objRef, ft.getId()); 
+	        featureGuids.add(fguid);
+	    }					
+		params.withFeatureGuids(featureGuids);
+		reClient.storeWSGenome(params,null);
 	}
 
 	private Map<String, String> loadTestFasta(String genomeWsRef) {
@@ -107,7 +141,7 @@ public class KEConnectorGenomeHomologyServerImpl {
 	}
 
 	private void storeBBHs(List<Hit> bbhs, RunParams params) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(params.getGenomeWsRef() + ".bbhs"));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(params.getObjRef() + ".bbhs"));
 		try{
 			for(Hit bbh: bbhs){
 				bw.write(bbh.qname 
@@ -288,7 +322,7 @@ public class KEConnectorGenomeHomologyServerImpl {
 		String token = System.getenv("token");
 		String user = System.getenv("user");
 		
-		impl.run(new RunParams().withGenomeWsRef("25582/2/1"), new AuthToken(token, user));
+		impl.run(new RunParams().withObjRef("25582/2/1"), new AuthToken(token, user));
 //		File rootDir = new File("/kb/module/work/tmp/");
 //		for(File file: rootDir.listFiles()){
 //			if(file.getName().endsWith("faa")){

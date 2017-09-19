@@ -17,7 +17,7 @@ except:
     from baseclient import BaseClient as _BaseClient  # @Reimport
 
 
-class KEHomologyConnector(object):
+class KEConnectorGenomeHomology(object):
 
     def __init__(
             self, url=None, timeout=30 * 60, user_id=None,
@@ -36,13 +36,13 @@ class KEHomologyConnector(object):
     def run(self, params, context=None):
         """
         :param params: instance of type "RunParams" -> structure: parameter
-           "genome_ws_ref" of String
+           "app_guid" of String, parameter "obj_ref" of String
         :returns: instance of type "RunOutput" -> structure:
         """
         return self._client.call_method(
-            'KEHomologyConnector.run',
+            'KEConnectorGenomeHomology.run',
             [params], self._service_ver, context)
 
     def status(self, context=None):
-        return self._client.call_method('KEHomologyConnector.status',
+        return self._client.call_method('KEConnectorGenomeHomology.status',
                                         [], self._service_ver, context)

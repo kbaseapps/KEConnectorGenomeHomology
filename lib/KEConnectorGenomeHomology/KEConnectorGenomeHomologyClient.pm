@@ -1,4 +1,4 @@
-package KEHomologyConnector::KEHomologyConnectorClient;
+package KEConnectorGenomeHomology::KEConnectorGenomeHomologyClient;
 
 use JSON::RPC::Client;
 use POSIX;
@@ -21,7 +21,7 @@ our $VERSION = "0.1.0";
 
 =head1 NAME
 
-KEHomologyConnector::KEHomologyConnectorClient
+KEConnectorGenomeHomology::KEConnectorGenomeHomologyClient
 
 =head1 DESCRIPTION
 
@@ -37,7 +37,7 @@ sub new
     
 
     my $self = {
-	client => KEHomologyConnector::KEHomologyConnectorClient::RpcClient->new,
+	client => KEConnectorGenomeHomology::KEConnectorGenomeHomologyClient::RpcClient->new,
 	url => $url,
 	headers => [],
     };
@@ -119,10 +119,11 @@ sub new
 =begin html
 
 <pre>
-$params is a KEHomologyConnector.RunParams
-$return is a KEHomologyConnector.RunOutput
+$params is a KEConnectorGenomeHomology.RunParams
+$return is a KEConnectorGenomeHomology.RunOutput
 RunParams is a reference to a hash where the following keys are defined:
-	genome_ws_ref has a value which is a string
+	app_guid has a value which is a string
+	obj_ref has a value which is a string
 RunOutput is a reference to a hash where the following keys are defined
 
 </pre>
@@ -131,10 +132,11 @@ RunOutput is a reference to a hash where the following keys are defined
 
 =begin text
 
-$params is a KEHomologyConnector.RunParams
-$return is a KEHomologyConnector.RunOutput
+$params is a KEConnectorGenomeHomology.RunParams
+$return is a KEConnectorGenomeHomology.RunOutput
 RunParams is a reference to a hash where the following keys are defined:
-	genome_ws_ref has a value which is a string
+	app_guid has a value which is a string
+	obj_ref has a value which is a string
 RunOutput is a reference to a hash where the following keys are defined
 
 
@@ -173,7 +175,7 @@ RunOutput is a reference to a hash where the following keys are defined
 
     my $url = $self->{url};
     my $result = $self->{client}->call($url, $self->{headers}, {
-	    method => "KEHomologyConnector.run",
+	    method => "KEConnectorGenomeHomology.run",
 	    params => \@args,
     });
     if ($result) {
@@ -204,7 +206,7 @@ sub status
     }
     my $url = $self->{url};
     my $result = $self->{client}->call($url, $self->{headers}, {
-        method => "KEHomologyConnector.status",
+        method => "KEConnectorGenomeHomology.status",
         params => \@args,
     });
     if ($result) {
@@ -229,7 +231,7 @@ sub status
 sub version {
     my ($self) = @_;
     my $result = $self->{client}->call($self->{url}, $self->{headers}, {
-        method => "KEHomologyConnector.version",
+        method => "KEConnectorGenomeHomology.version",
         params => [],
     });
     if ($result) {
@@ -272,10 +274,10 @@ sub _validate_version {
         );
     }
     if ($sMinor > $cMinor) {
-        warn "New client version available for KEHomologyConnector::KEHomologyConnectorClient\n";
+        warn "New client version available for KEConnectorGenomeHomology::KEConnectorGenomeHomologyClient\n";
     }
     if ($sMajor == 0) {
-        warn "KEHomologyConnector::KEHomologyConnectorClient version is $svr_version. API subject to change.\n";
+        warn "KEConnectorGenomeHomology::KEConnectorGenomeHomologyClient version is $svr_version. API subject to change.\n";
     }
 }
 
@@ -295,7 +297,8 @@ sub _validate_version {
 
 <pre>
 a reference to a hash where the following keys are defined:
-genome_ws_ref has a value which is a string
+app_guid has a value which is a string
+obj_ref has a value which is a string
 
 </pre>
 
@@ -304,7 +307,8 @@ genome_ws_ref has a value which is a string
 =begin text
 
 a reference to a hash where the following keys are defined:
-genome_ws_ref has a value which is a string
+app_guid has a value which is a string
+obj_ref has a value which is a string
 
 
 =end text
@@ -341,7 +345,7 @@ a reference to a hash where the following keys are defined
 
 =cut
 
-package KEHomologyConnector::KEHomologyConnectorClient::RpcClient;
+package KEConnectorGenomeHomology::KEConnectorGenomeHomologyClient::RpcClient;
 use base 'JSON::RPC::Client';
 use POSIX;
 use strict;

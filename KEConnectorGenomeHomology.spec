@@ -5,7 +5,8 @@ A KBase module: KEHomologyConnector
 module KEConnectorGenomeHomology {
 
     typedef structure {
-    	string genome_ws_ref;
+    	string app_guid;
+    	string obj_ref;
     } RunParams;
 
     typedef structure {
