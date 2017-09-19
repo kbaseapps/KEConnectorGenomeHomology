@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +22,14 @@ import kbaserelationengine.StoreWSGenomeParams;
 import keconnectorgenomehomology.util.BlastStarter;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientException;
+import us.kbase.common.service.UObject;
 import us.kbase.common.service.UnauthorizedException;
 import us.kbase.common.utils.FastaReader;
 import kbasegenomes.Feature;
 import kbasegenomes.Genome;
 import workspace.GetObjects2Params;
+import workspace.GetObjects2Results;
+import workspace.ObjectData;
 import workspace.ObjectSpecification;
 import workspace.WorkspaceClient;
 
@@ -41,6 +45,8 @@ public class KEConnectorGenomeHomologyServerImpl {
 	private static final String MAX_EVALUE = "" + 1.0e-5;
 		
 	private final String[] BASE_ORTHOLOG_GUIDS = new String[]{"KBHgp746131","KBHgp779288"};
+	
+	private final static boolean USE_WS_ADMIN = true;
 		
     public KEConnectorGenomeHomologyServerImpl(Map<String, String> config) throws MalformedURLException {
     	tmpDir = new File(config.get("scratch"));
@@ -53,7 +59,7 @@ public class KEConnectorGenomeHomologyServerImpl {
 		long timeStart = System.currentTimeMillis();
 		
 		System.out.print("Loading genome...");
-		Genome wsGenome = getWSGenome(params.getObjRef(), token);
+		Genome wsGenome = getWSGenome(params.getObjRef(), token, USE_WS_ADMIN);
 		Map<String,String> wsProteome = toProteome(wsGenome);
 //		Map<String,String> wsProteome = loadTestFasta(params.getGenomeWsRef());
 		System.out.println("Done! " + wsProteome.size());
@@ -156,14 +162,24 @@ public class KEConnectorGenomeHomologyServerImpl {
 		}
 	}
 
-	private Genome getWSGenome(String genomeWsRef, AuthToken token) throws IOException, JsonClientException{
+	private Genome getWSGenome(String genomeWsRef, AuthToken token, boolean asAdmin) throws IOException, JsonClientException{
 	    WorkspaceClient wsCl = new WorkspaceClient(wsUrl, token);
 	    wsCl.setAllSSLCertificatesTrusted(true);
 	    wsCl.setIsInsecureHttpConnectionAllowed(true);
 	    
-	    return wsCl.getObjects2(new GetObjects2Params().withObjects(
-	            Arrays.asList(new ObjectSpecification().withRef(genomeWsRef))))
-	            .getData().get(0).getData().asClassInstance(Genome.class);		
+	    if (asAdmin) {
+	        final Map<String, Object> command = new HashMap<>();
+	        command.put("command", "getObjects");
+	        command.put("params", new GetObjects2Params().withObjects(
+	                Arrays.asList(new ObjectSpecification().withRef(genomeWsRef))));
+	        return wsCl.administer(new UObject(command))
+	                .asClassInstance(GetObjects2Results.class)
+	                .getData().get(0).getData().asClassInstance(Genome.class);
+	    } else {
+    	    return wsCl.getObjects2(new GetObjects2Params().withObjects(
+    	            Arrays.asList(new ObjectSpecification().withRef(genomeWsRef))))
+    	            .getData().get(0).getData().asClassInstance(Genome.class);
+	    }
 	}
 	
 	private Map<String, String> toProteome(Genome wsGenome) {
