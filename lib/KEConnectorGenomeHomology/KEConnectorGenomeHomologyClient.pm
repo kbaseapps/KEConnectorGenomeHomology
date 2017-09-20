@@ -120,11 +120,16 @@ sub new
 
 <pre>
 $params is a KEConnectorGenomeHomology.RunParams
-$return is a KEConnectorGenomeHomology.RunOutput
+$return is a KEConnectorGenomeHomology.KEAppOutput
 RunParams is a reference to a hash where the following keys are defined:
 	app_guid has a value which is a string
 	obj_ref has a value which is a string
-RunOutput is a reference to a hash where the following keys are defined
+KEAppOutput is a reference to a hash where the following keys are defined:
+	new_re_nodes has a value which is an int
+	updated_re_nodes has a value which is an int
+	new_re_links has a value which is an int
+	properties_set has a value which is an int
+	message has a value which is a string
 
 </pre>
 
@@ -133,11 +138,16 @@ RunOutput is a reference to a hash where the following keys are defined
 =begin text
 
 $params is a KEConnectorGenomeHomology.RunParams
-$return is a KEConnectorGenomeHomology.RunOutput
+$return is a KEConnectorGenomeHomology.KEAppOutput
 RunParams is a reference to a hash where the following keys are defined:
 	app_guid has a value which is a string
 	obj_ref has a value which is a string
-RunOutput is a reference to a hash where the following keys are defined
+KEAppOutput is a reference to a hash where the following keys are defined:
+	new_re_nodes has a value which is an int
+	updated_re_nodes has a value which is an int
+	new_re_links has a value which is an int
+	properties_set has a value which is an int
+	message has a value which is a string
 
 
 =end text
@@ -317,7 +327,7 @@ obj_ref has a value which is a string
 
 
 
-=head2 RunOutput
+=head2 KEAppOutput
 
 =over 4
 
@@ -328,14 +338,26 @@ obj_ref has a value which is a string
 =begin html
 
 <pre>
-a reference to a hash where the following keys are defined
+a reference to a hash where the following keys are defined:
+new_re_nodes has a value which is an int
+updated_re_nodes has a value which is an int
+new_re_links has a value which is an int
+properties_set has a value which is an int
+message has a value which is a string
+
 </pre>
 
 =end html
 
 =begin text
 
-a reference to a hash where the following keys are defined
+a reference to a hash where the following keys are defined:
+new_re_nodes has a value which is an int
+updated_re_nodes has a value which is an int
+new_re_links has a value which is an int
+properties_set has a value which is an int
+message has a value which is a string
+
 
 =end text
 
