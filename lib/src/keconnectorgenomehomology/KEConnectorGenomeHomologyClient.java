@@ -167,15 +167,15 @@ public class KEConnectorGenomeHomologyClient {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link keconnectorgenomehomology.RunParams RunParams}
-     * @return   instance of type {@link keconnectorgenomehomology.RunOutput RunOutput}
+     * @return   instance of type {@link keconnectorgenomehomology.KEAppOutput KEAppOutput}
      * @throws IOException if an IO exception occurs
      * @throws JsonClientException if a JSON RPC exception occurs
      */
-    public RunOutput run(RunParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+    public KEAppOutput run(RunParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
         List<Object> args = new ArrayList<Object>();
         args.add(params);
-        TypeReference<List<RunOutput>> retType = new TypeReference<List<RunOutput>>() {};
-        List<RunOutput> res = caller.jsonrpcCall("KEConnectorGenomeHomology.run", args, retType, true, true, jsonRpcContext, this.serviceVersion);
+        TypeReference<List<KEAppOutput>> retType = new TypeReference<List<KEAppOutput>>() {};
+        List<KEAppOutput> res = caller.jsonrpcCall("KEConnectorGenomeHomology.run", args, retType, true, true, jsonRpcContext, this.serviceVersion);
         return res.get(0);
     }
 

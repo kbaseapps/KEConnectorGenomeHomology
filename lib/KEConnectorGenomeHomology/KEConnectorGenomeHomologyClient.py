@@ -37,7 +37,10 @@ class KEConnectorGenomeHomology(object):
         """
         :param params: instance of type "RunParams" -> structure: parameter
            "app_guid" of String, parameter "obj_ref" of String
-        :returns: instance of type "RunOutput" -> structure:
+        :returns: instance of type "KEAppOutput" -> structure: parameter
+           "new_re_nodes" of Long, parameter "updated_re_nodes" of Long,
+           parameter "new_re_links" of Long, parameter "properties_set" of
+           Long, parameter "message" of String
         """
         return self._client.call_method(
             'KEConnectorGenomeHomology.run',

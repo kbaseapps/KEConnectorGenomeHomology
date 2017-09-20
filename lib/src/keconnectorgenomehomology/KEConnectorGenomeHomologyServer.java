@@ -22,7 +22,7 @@ public class KEConnectorGenomeHomologyServer extends JsonServerServlet {
     private static final long serialVersionUID = 1L;
     private static final String version = "0.0.1";
     private static final String gitUrl = "https://github.com/psnovichkov/KEConnectorGenomeHomology.git";
-    private static final String gitCommitHash = "75be75f95d669b52a7d9201feaf808a3fc131b36";
+    private static final String gitCommitHash = "a6de42c9229e52ea8135398fed3b2ebe92b8f993";
 
     //BEGIN_CLASS_HEADER
     private KEConnectorGenomeHomologyServerImpl impl;
@@ -40,11 +40,11 @@ public class KEConnectorGenomeHomologyServer extends JsonServerServlet {
      * <pre>
      * </pre>
      * @param   params   instance of type {@link keconnectorgenomehomology.RunParams RunParams}
-     * @return   instance of type {@link keconnectorgenomehomology.RunOutput RunOutput}
+     * @return   instance of type {@link keconnectorgenomehomology.KEAppOutput KEAppOutput}
      */
     @JsonServerMethod(rpc = "KEConnectorGenomeHomology.run", async=true)
-    public RunOutput run(RunParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
-        RunOutput returnVal = null;
+    public KEAppOutput run(RunParams params, AuthToken authPart, RpcContext jsonRpcContext) throws Exception {
+        KEAppOutput returnVal = null;
         //BEGIN run
         returnVal = impl.run(params, authPart);
         //END run

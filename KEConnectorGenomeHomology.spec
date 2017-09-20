@@ -10,7 +10,13 @@ module KEConnectorGenomeHomology {
     } RunParams;
 
     typedef structure {
-    } RunOutput;
+		int new_re_nodes;    
+		int updated_re_nodes;
+		int new_re_links;
+		int properties_set;			
+		string message;    
+    } KEAppOutput;
 
-    funcdef run(RunParams params) returns (RunOutput) authentication required;
+
+    funcdef run(RunParams params) returns (KEAppOutput) authentication required;
 };

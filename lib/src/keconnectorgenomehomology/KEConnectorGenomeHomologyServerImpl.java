@@ -14,9 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import kbasegenomes.Feature;
+import kbasegenomes.Genome;
 import kbaserelationengine.ConnectWSFeatures2RefOrthologsParams;
 import kbaserelationengine.FeatureSequence;
 import kbaserelationengine.GetFeatureSequencesParams;
+import kbaserelationengine.GraphUpdateStat;
 import kbaserelationengine.KBaseRelationEngineServiceClient;
 import kbaserelationengine.StoreWSGenomeParams;
 import keconnectorgenomehomology.util.BlastStarter;
@@ -25,11 +28,8 @@ import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UObject;
 import us.kbase.common.service.UnauthorizedException;
 import us.kbase.common.utils.FastaReader;
-import kbasegenomes.Feature;
-import kbasegenomes.Genome;
 import workspace.GetObjects2Params;
 import workspace.GetObjects2Results;
-import workspace.ObjectData;
 import workspace.ObjectSpecification;
 import workspace.WorkspaceClient;
 
@@ -54,8 +54,13 @@ public class KEConnectorGenomeHomologyServerImpl {
         srvWizUrl = new URL(config.get("srv-wiz-url"));
 	}	
 	    
-	public RunOutput run(RunParams params, AuthToken token) throws Exception {	
-
+	public KEAppOutput run(RunParams params, AuthToken token) throws Exception {	
+		KEAppOutput appOutput = new KEAppOutput()
+				.withMessage("")
+				.withNewReLinks(0L)
+				.withNewReNodes(0L)
+				.withPropertiesSet(0L)
+				.withUpdatedReNodes(0L);
 		long timeStart = System.currentTimeMillis();
 		
 		System.out.print("Loading genome...");
@@ -87,8 +92,8 @@ public class KEConnectorGenomeHomologyServerImpl {
 		System.out.println("Done");		
 		
 		// Storing results in RE
-		storeWSGenome(params.getObjRef(), wsGenome, token);
-		storeBBHs(params.getObjRef(), bbhs, token);
+		storeWSGenome(params.getObjRef(), wsGenome, token, appOutput);
+		storeBBHs(params.getObjRef(), bbhs, token, appOutput);
 		
 //		storeBBHs(bbhs, params);
 
@@ -100,10 +105,10 @@ public class KEConnectorGenomeHomologyServerImpl {
 				+"\tfeature_count=" + wsProteome.size()
 				+"\tbbhs_count=" + bbhs.size());
 
-		return new RunOutput();
+		return appOutput;
 	}
 
-	private void storeBBHs(String objRef, List<Hit> bbhs, AuthToken token) throws IOException, JsonClientException {
+	private void storeBBHs(String objRef, List<Hit> bbhs, AuthToken token, KEAppOutput appOutput) throws IOException, JsonClientException {
 		KBaseRelationEngineServiceClient reClient = reClient(token);	
 		
 		Map<String,String> ws2refFeatureGuids = new Hashtable<String,String>();
@@ -111,15 +116,16 @@ public class KEConnectorGenomeHomologyServerImpl {
 			ws2refFeatureGuids.put(wsFeatureId2GUID(objRef, hit.qname), hit.tname );
 		}
 		
-		reClient.connectWSFeatures2RefOrthologs(new ConnectWSFeatures2RefOrthologsParams()
+		GraphUpdateStat res = reClient.connectWSFeatures2RefOrthologs(new ConnectWSFeatures2RefOrthologsParams()
 				.withWs2refFeatureGuids(ws2refFeatureGuids));
+		updateAppOutput(appOutput, res); 
 	}
 
 	private static String wsFeatureId2GUID(String objRef, String featureId){
 		return "ws:" + objRef + ":feature/"  + featureId;
 	}
 	
-	private void storeWSGenome(String objRef, Genome wsGenome, AuthToken token) throws IOException, JsonClientException {
+	private void storeWSGenome(String objRef, Genome wsGenome, AuthToken token, KEAppOutput appOutput) throws IOException, JsonClientException {
 		KBaseRelationEngineServiceClient reClient = reClient(token);		
 		StoreWSGenomeParams params = new StoreWSGenomeParams();
 		params.withGenomeRef(objRef);
@@ -129,7 +135,16 @@ public class KEConnectorGenomeHomologyServerImpl {
 	        featureGuids.add(fguid);
 	    }					
 		params.withFeatureGuids(featureGuids);
-		reClient.storeWSGenome(params,null);
+		GraphUpdateStat res = reClient.storeWSGenome(params);
+		updateAppOutput(appOutput, res); 
+	}
+
+	private void updateAppOutput(KEAppOutput appOutput, GraphUpdateStat res) {
+		appOutput
+			.withNewReLinks(appOutput.getNewReLinks() + res.getRelationshipsCreated())
+			.withNewReNodes(appOutput.getNewReNodes() + res.getNodesCreated())
+			.withPropertiesSet(appOutput.getPropertiesSet() + res.getPropertiesSet())
+			.withUpdatedReNodes(appOutput.getUpdatedReNodes() + 0);
 	}
 
 	private Map<String, String> loadTestFasta(String genomeWsRef) {
