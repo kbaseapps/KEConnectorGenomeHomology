@@ -18,10 +18,14 @@ import kbasegenomes.Feature;
 import kbasegenomes.Genome;
 import kbaserelationengine.ConnectWSFeatures2RefOrthologsParams;
 import kbaserelationengine.FeatureSequence;
+import kbaserelationengine.FeatureTerms;
 import kbaserelationengine.GetFeatureSequencesParams;
+import kbaserelationengine.GetFeatureTermsParams;
 import kbaserelationengine.GraphUpdateStat;
 import kbaserelationengine.KBaseRelationEngineServiceClient;
+import kbaserelationengine.StoreRichWSGenomeParams;
 import kbaserelationengine.StoreWSGenomeParams;
+import kbaserelationengine.WSFeature;
 import keconnectorgenomehomology.util.BlastStarter;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientException;
@@ -92,8 +96,9 @@ public class KEConnectorGenomeHomologyServerImpl {
 		System.out.println("Done");		
 		
 		// Storing results in RE
-		storeWSGenome(params.getObjRef(), wsGenome, token, appOutput);
-		storeBBHs(params.getObjRef(), bbhs, token, appOutput);
+//		storeWSGenome(params.getObjRef(), wsGenome, token, appOutput);
+//		storeBBHs(params.getObjRef(), bbhs, token, appOutput);
+		storeRichWSGenome(params.getObjRef(), wsGenome, taxGuid,  bbhs,  token, appOutput);
 		
 //		storeBBHs(bbhs, params);
 
@@ -106,6 +111,52 @@ public class KEConnectorGenomeHomologyServerImpl {
 				+"\tbbhs_count=" + bbhs.size());
 
 		return appOutput;
+	}
+
+	private void storeRichWSGenome(String objRef,  Genome wsGenome, String refTaxonGuid, List<Hit> bbhs,
+			AuthToken token, KEAppOutput appOutput) throws IOException, JsonClientException {
+		
+		KBaseRelationEngineServiceClient reClient = reClient(token);	
+		
+		List<FeatureTerms> featureTerms = reClient.getFeatureTerms(
+				new GetFeatureTermsParams()
+				.withTaxonGuid(refTaxonGuid)
+				.withTermSpace("biological_process")
+				);
+		Hashtable<String,String> fguid2terms = new Hashtable<String,String>();
+		for(FeatureTerms ft: featureTerms){
+			if(ft.getTermGuids() != null && ft.getTermGuids().size() > 0){
+				fguid2terms.put(ft.getFeatureGuid(), ft.getTermGuids().get(0));
+			}
+		}		
+		
+		Map<String,String> ws2refFeatureGuids = new Hashtable<String,String>();
+		for(Hit hit: bbhs){
+			ws2refFeatureGuids.put(wsFeatureId2GUID(objRef, hit.qname), hit.tname );
+		}
+		
+		List<WSFeature> wsFeatures = new ArrayList<WSFeature>();
+	    for (Feature ft : wsGenome.getFeatures()) {
+	        String fguid = wsFeatureId2GUID(objRef, ft.getId()); 
+	        String name = (ft.getAliases() != null && ft.getAliases().size() > 0) ? 
+	        		ft.getAliases().get(0):
+	        		null;
+	        String refFeatureGuid = ws2refFeatureGuids.get(fguid); 
+	        String termGuid = refFeatureGuid != null ? fguid2terms.get(refFeatureGuid) : null;
+	        wsFeatures.add(
+	        		new WSFeature()
+	        		.withGuid(fguid)
+	        		.withName(name)
+	        		.withRefTermGuid(termGuid));
+	    }					
+		
+		GraphUpdateStat res = reClient.storeRichWSGenome(new StoreRichWSGenomeParams()
+				.withGenomeRef(objRef)
+				.withFeatures(wsFeatures)
+				.withWs2refFeatureGuids(ws2refFeatureGuids)
+				);
+		updateAppOutput(appOutput, res); 
+		
 	}
 
 	private void storeBBHs(String objRef, List<Hit> bbhs, AuthToken token, KEAppOutput appOutput) throws IOException, JsonClientException {
@@ -353,7 +404,7 @@ public class KEConnectorGenomeHomologyServerImpl {
 		String token = System.getenv("token");
 		String user = System.getenv("user");
 		
-		impl.run(new RunParams().withObjRef("25582/2/1"), new AuthToken(token, user));
+		impl.run(new RunParams().withObjRef("25582/28/1"), new AuthToken(token, user));
 //		File rootDir = new File("/kb/module/work/tmp/");
 //		for(File file: rootDir.listFiles()){
 //			if(file.getName().endsWith("faa")){
