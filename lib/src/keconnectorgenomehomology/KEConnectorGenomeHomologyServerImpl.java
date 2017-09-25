@@ -82,33 +82,34 @@ public class KEConnectorGenomeHomologyServerImpl {
 		BlastStarter.run(tmpDir, wsProteome, baseOrtologs, blastBinDir, MAX_EVALUE, taxFinder);
 		System.out.println("Done");		
 
-		String taxGuid = taxFinder.getBestTaxGuid();
-		System.out.println("taxGuid = " + taxGuid);
-		
-		System.out.print("Loading ref proteome...");		
-		Map<String,String> refProteome = getRefProteome(taxGuid, token);
-		System.out.println("Done  " + refProteome.size());				
-		
-		System.out.print("Doing blastp...");		
-		BBHsFinder bbhFinder = new BBHsFinder();
-		BlastStarter.run(tmpDir, wsProteome, refProteome, blastBinDir, MAX_EVALUE, bbhFinder);
-		List<Hit> bbhs = bbhFinder.getBBHs();
-		System.out.println("Done");		
-		
-		// Storing results in RE
-//		storeWSGenome(params.getObjRef(), wsGenome, token, appOutput);
-//		storeBBHs(params.getObjRef(), bbhs, token, appOutput);
-		storeRichWSGenome(params.getObjRef(), wsGenome, taxGuid,  bbhs,  token, appOutput);
-		
-//		storeBBHs(bbhs, params);
+		if( taxFinder.isBestTaxonFound() ){
+			String taxGuid = taxFinder.getBestTaxGuid();
+			System.out.println("taxGuid = " + taxGuid);
+			
+			System.out.print("Loading ref proteome...");		
+			Map<String,String> refProteome = getRefProteome(taxGuid, token);
+			System.out.println("Done  " + refProteome.size());				
+			
+			System.out.print("Doing blastp...");		
+			BBHsFinder bbhFinder = new BBHsFinder();
+			BlastStarter.run(tmpDir, wsProteome, refProteome, blastBinDir, MAX_EVALUE, bbhFinder);
+			List<Hit> bbhs = bbhFinder.getBBHs();
+			System.out.println("Done");		
+			
+			// Storing results in RE
+			System.out.println("Storing node and relations");
+			storeRichWSGenome(params.getObjRef(), wsGenome, taxGuid,  bbhs,  token, appOutput);
+			
 
-		long timeRun = (System.currentTimeMillis() - timeStart)/1000;
-		System.out.println( params.getObjRef()
-				+ "\ttime=" + timeRun
-				+ "\ttaxGuid=" + taxFinder.getBestTaxGuid() 
-				+ "\tident=" + taxFinder.bestHit.ident
-				+"\tfeature_count=" + wsProteome.size()
-				+"\tbbhs_count=" + bbhs.size());
+			long timeRun = (System.currentTimeMillis() - timeStart)/1000;
+			System.out.println( params.getObjRef()
+					+ "\ttime=" + timeRun
+					+ "\ttaxGuid=" + taxFinder.getBestTaxGuid() 
+					+ "\tident=" + taxFinder.bestHit.ident
+					+"\tfeature_count=" + wsProteome.size()
+					+"\tbbhs_count=" + bbhs.size());
+			
+		}
 
 		return appOutput;
 	}
@@ -290,6 +291,10 @@ public class KEConnectorGenomeHomologyServerImpl {
 			if(bitScore > bestHit.bitScore){
 				bestHit.setHit(qname, tname, bitScore, ident, qstart, qend);
 			}
+		}
+		
+		public boolean isBestTaxonFound(){
+			return bestHit.tname != null;
 		}
 		
 		public String getBestTaxGuid(){
