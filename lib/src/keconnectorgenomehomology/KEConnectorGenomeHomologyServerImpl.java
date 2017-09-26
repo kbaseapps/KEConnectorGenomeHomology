@@ -139,15 +139,21 @@ public class KEConnectorGenomeHomologyServerImpl {
 		List<WSFeature> wsFeatures = new ArrayList<WSFeature>();
 	    for (Feature ft : wsGenome.getFeatures()) {
 	        String fguid = wsFeatureId2GUID(objRef, ft.getId()); 
-	        String name = (ft.getAliases() != null && ft.getAliases().size() > 0) ? 
-	        		ft.getAliases().get(0):
-	        		null;
+	        String name = ft.getId();
+	        List<String> aliases = new ArrayList<String>();
+	        if(ft.getAliases() != null)
+	        {
+	        	aliases.addAll(ft.getAliases() );
+	        }
+	        String fFunction = ft.getFunction();
 	        String refFeatureGuid = ws2refFeatureGuids.get(fguid); 
 	        String termGuid = refFeatureGuid != null ? fguid2terms.get(refFeatureGuid) : null;
 	        wsFeatures.add(
 	        		new WSFeature()
 	        		.withGuid(fguid)
 	        		.withName(name)
+	        		.withFunction(fFunction)
+	        		.withAliases(aliases)
 	        		.withRefTermGuid(termGuid));
 	    }					
 		
