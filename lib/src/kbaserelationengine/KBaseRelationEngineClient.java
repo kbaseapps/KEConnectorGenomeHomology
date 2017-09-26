@@ -596,6 +596,106 @@ public class KBaseRelationEngineClient {
     }
 
     /**
+     * <p>Original spec-file function name: getWSFeatureTermEnrichmentProfiles</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetWSFeatureTermEnrichmentProfilesParams GetWSFeatureTermEnrichmentProfilesParams}
+     * @return   instance of type {@link kbaserelationengine.GetWSFeatureTermEnrichmentProfilesOutput GetWSFeatureTermEnrichmentProfilesOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    protected String _getWSFeatureTermEnrichmentProfilesSubmit(GetWSFeatureTermEnrichmentProfilesParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        if (this.serviceVersion != null) {
+            if (jsonRpcContext == null || jsonRpcContext.length == 0 || jsonRpcContext[0] == null)
+                jsonRpcContext = new RpcContext[] {new RpcContext()};
+            jsonRpcContext[0].getAdditionalProperties().put("service_ver", this.serviceVersion);
+        }
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
+        List<String> res = caller.jsonrpcCall("KBaseRelationEngine._getWSFeatureTermEnrichmentProfiles_submit", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: getWSFeatureTermEnrichmentProfiles</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetWSFeatureTermEnrichmentProfilesParams GetWSFeatureTermEnrichmentProfilesParams}
+     * @return   instance of type {@link kbaserelationengine.GetWSFeatureTermEnrichmentProfilesOutput GetWSFeatureTermEnrichmentProfilesOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public GetWSFeatureTermEnrichmentProfilesOutput getWSFeatureTermEnrichmentProfiles(GetWSFeatureTermEnrichmentProfilesParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        String jobId = _getWSFeatureTermEnrichmentProfilesSubmit(params, jsonRpcContext);
+        TypeReference<List<JobState<List<GetWSFeatureTermEnrichmentProfilesOutput>>>> retType = new TypeReference<List<JobState<List<GetWSFeatureTermEnrichmentProfilesOutput>>>>() {};
+        long asyncJobCheckTimeMs = this.asyncJobCheckTimeMs;
+        while (true) {
+            if (Thread.currentThread().isInterrupted())
+                throw new JsonClientException("Thread was interrupted");
+            try { 
+                Thread.sleep(asyncJobCheckTimeMs);
+            } catch(Exception ex) {
+                throw new JsonClientException("Thread was interrupted", ex);
+            }
+            asyncJobCheckTimeMs = Math.min(asyncJobCheckTimeMs * this.asyncJobCheckTimeScalePercent / 100, this.asyncJobCheckMaxTimeMs);
+            JobState<List<GetWSFeatureTermEnrichmentProfilesOutput>> res = _checkJob(jobId, retType);
+            if (res.getFinished() != 0L)
+                return res.getResult().get(0);
+        }
+    }
+
+    /**
+     * <p>Original spec-file function name: getWSFeatureTermPairs</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetWSFeatureTermPairsParams GetWSFeatureTermPairsParams}
+     * @return   instance of list of type {@link kbaserelationengine.WSFeatureTermPair WSFeatureTermPair}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    protected String _getWSFeatureTermPairsSubmit(GetWSFeatureTermPairsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        if (this.serviceVersion != null) {
+            if (jsonRpcContext == null || jsonRpcContext.length == 0 || jsonRpcContext[0] == null)
+                jsonRpcContext = new RpcContext[] {new RpcContext()};
+            jsonRpcContext[0].getAdditionalProperties().put("service_ver", this.serviceVersion);
+        }
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
+        List<String> res = caller.jsonrpcCall("KBaseRelationEngine._getWSFeatureTermPairs_submit", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: getWSFeatureTermPairs</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetWSFeatureTermPairsParams GetWSFeatureTermPairsParams}
+     * @return   instance of list of type {@link kbaserelationengine.WSFeatureTermPair WSFeatureTermPair}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public List<WSFeatureTermPair> getWSFeatureTermPairs(GetWSFeatureTermPairsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        String jobId = _getWSFeatureTermPairsSubmit(params, jsonRpcContext);
+        TypeReference<List<JobState<List<List<WSFeatureTermPair>>>>> retType = new TypeReference<List<JobState<List<List<WSFeatureTermPair>>>>>() {};
+        long asyncJobCheckTimeMs = this.asyncJobCheckTimeMs;
+        while (true) {
+            if (Thread.currentThread().isInterrupted())
+                throw new JsonClientException("Thread was interrupted");
+            try { 
+                Thread.sleep(asyncJobCheckTimeMs);
+            } catch(Exception ex) {
+                throw new JsonClientException("Thread was interrupted", ex);
+            }
+            asyncJobCheckTimeMs = Math.min(asyncJobCheckTimeMs * this.asyncJobCheckTimeScalePercent / 100, this.asyncJobCheckMaxTimeMs);
+            JobState<List<List<WSFeatureTermPair>>> res = _checkJob(jobId, retType);
+            if (res.getFinished() != 0L)
+                return res.getResult().get(0);
+        }
+    }
+
+    /**
      * <p>Original spec-file function name: getFeatureTerms</p>
      * <pre>
      * </pre>
@@ -640,6 +740,156 @@ public class KBaseRelationEngineClient {
             }
             asyncJobCheckTimeMs = Math.min(asyncJobCheckTimeMs * this.asyncJobCheckTimeScalePercent / 100, this.asyncJobCheckMaxTimeMs);
             JobState<List<List<FeatureTerms>>> res = _checkJob(jobId, retType);
+            if (res.getFinished() != 0L)
+                return res.getResult().get(0);
+        }
+    }
+
+    /**
+     * <p>Original spec-file function name: getTerms</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetTermsParams GetTermsParams}
+     * @return   instance of list of type {@link kbaserelationengine.Term Term}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    protected String _getTermsSubmit(GetTermsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        if (this.serviceVersion != null) {
+            if (jsonRpcContext == null || jsonRpcContext.length == 0 || jsonRpcContext[0] == null)
+                jsonRpcContext = new RpcContext[] {new RpcContext()};
+            jsonRpcContext[0].getAdditionalProperties().put("service_ver", this.serviceVersion);
+        }
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
+        List<String> res = caller.jsonrpcCall("KBaseRelationEngine._getTerms_submit", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: getTerms</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetTermsParams GetTermsParams}
+     * @return   instance of list of type {@link kbaserelationengine.Term Term}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public List<Term> getTerms(GetTermsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        String jobId = _getTermsSubmit(params, jsonRpcContext);
+        TypeReference<List<JobState<List<List<Term>>>>> retType = new TypeReference<List<JobState<List<List<Term>>>>>() {};
+        long asyncJobCheckTimeMs = this.asyncJobCheckTimeMs;
+        while (true) {
+            if (Thread.currentThread().isInterrupted())
+                throw new JsonClientException("Thread was interrupted");
+            try { 
+                Thread.sleep(asyncJobCheckTimeMs);
+            } catch(Exception ex) {
+                throw new JsonClientException("Thread was interrupted", ex);
+            }
+            asyncJobCheckTimeMs = Math.min(asyncJobCheckTimeMs * this.asyncJobCheckTimeScalePercent / 100, this.asyncJobCheckMaxTimeMs);
+            JobState<List<List<Term>>> res = _checkJob(jobId, retType);
+            if (res.getFinished() != 0L)
+                return res.getResult().get(0);
+        }
+    }
+
+    /**
+     * <p>Original spec-file function name: getOrthologGroups</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetOrthologGroupsParams GetOrthologGroupsParams}
+     * @return   instance of type {@link kbaserelationengine.GetOrthologGroupsOutput GetOrthologGroupsOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    protected String _getOrthologGroupsSubmit(GetOrthologGroupsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        if (this.serviceVersion != null) {
+            if (jsonRpcContext == null || jsonRpcContext.length == 0 || jsonRpcContext[0] == null)
+                jsonRpcContext = new RpcContext[] {new RpcContext()};
+            jsonRpcContext[0].getAdditionalProperties().put("service_ver", this.serviceVersion);
+        }
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
+        List<String> res = caller.jsonrpcCall("KBaseRelationEngine._getOrthologGroups_submit", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: getOrthologGroups</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetOrthologGroupsParams GetOrthologGroupsParams}
+     * @return   instance of type {@link kbaserelationengine.GetOrthologGroupsOutput GetOrthologGroupsOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public GetOrthologGroupsOutput getOrthologGroups(GetOrthologGroupsParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        String jobId = _getOrthologGroupsSubmit(params, jsonRpcContext);
+        TypeReference<List<JobState<List<GetOrthologGroupsOutput>>>> retType = new TypeReference<List<JobState<List<GetOrthologGroupsOutput>>>>() {};
+        long asyncJobCheckTimeMs = this.asyncJobCheckTimeMs;
+        while (true) {
+            if (Thread.currentThread().isInterrupted())
+                throw new JsonClientException("Thread was interrupted");
+            try { 
+                Thread.sleep(asyncJobCheckTimeMs);
+            } catch(Exception ex) {
+                throw new JsonClientException("Thread was interrupted", ex);
+            }
+            asyncJobCheckTimeMs = Math.min(asyncJobCheckTimeMs * this.asyncJobCheckTimeScalePercent / 100, this.asyncJobCheckMaxTimeMs);
+            JobState<List<GetOrthologGroupsOutput>> res = _checkJob(jobId, retType);
+            if (res.getFinished() != 0L)
+                return res.getResult().get(0);
+        }
+    }
+
+    /**
+     * <p>Original spec-file function name: getOrthologTermEnrichmentProfiles</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetOrthologTermEnrichmentProfilesParams GetOrthologTermEnrichmentProfilesParams}
+     * @return   instance of type {@link kbaserelationengine.GetOrthologTermEnrichmentProfilesOutput GetOrthologTermEnrichmentProfilesOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    protected String _getOrthologTermEnrichmentProfilesSubmit(GetOrthologTermEnrichmentProfilesParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        if (this.serviceVersion != null) {
+            if (jsonRpcContext == null || jsonRpcContext.length == 0 || jsonRpcContext[0] == null)
+                jsonRpcContext = new RpcContext[] {new RpcContext()};
+            jsonRpcContext[0].getAdditionalProperties().put("service_ver", this.serviceVersion);
+        }
+        List<Object> args = new ArrayList<Object>();
+        args.add(params);
+        TypeReference<List<String>> retType = new TypeReference<List<String>>() {};
+        List<String> res = caller.jsonrpcCall("KBaseRelationEngine._getOrthologTermEnrichmentProfiles_submit", args, retType, true, true, jsonRpcContext);
+        return res.get(0);
+    }
+
+    /**
+     * <p>Original spec-file function name: getOrthologTermEnrichmentProfiles</p>
+     * <pre>
+     * </pre>
+     * @param   params   instance of type {@link kbaserelationengine.GetOrthologTermEnrichmentProfilesParams GetOrthologTermEnrichmentProfilesParams}
+     * @return   instance of type {@link kbaserelationengine.GetOrthologTermEnrichmentProfilesOutput GetOrthologTermEnrichmentProfilesOutput}
+     * @throws IOException if an IO exception occurs
+     * @throws JsonClientException if a JSON RPC exception occurs
+     */
+    public GetOrthologTermEnrichmentProfilesOutput getOrthologTermEnrichmentProfiles(GetOrthologTermEnrichmentProfilesParams params, RpcContext... jsonRpcContext) throws IOException, JsonClientException {
+        String jobId = _getOrthologTermEnrichmentProfilesSubmit(params, jsonRpcContext);
+        TypeReference<List<JobState<List<GetOrthologTermEnrichmentProfilesOutput>>>> retType = new TypeReference<List<JobState<List<GetOrthologTermEnrichmentProfilesOutput>>>>() {};
+        long asyncJobCheckTimeMs = this.asyncJobCheckTimeMs;
+        while (true) {
+            if (Thread.currentThread().isInterrupted())
+                throw new JsonClientException("Thread was interrupted");
+            try { 
+                Thread.sleep(asyncJobCheckTimeMs);
+            } catch(Exception ex) {
+                throw new JsonClientException("Thread was interrupted", ex);
+            }
+            asyncJobCheckTimeMs = Math.min(asyncJobCheckTimeMs * this.asyncJobCheckTimeScalePercent / 100, this.asyncJobCheckMaxTimeMs);
+            JobState<List<GetOrthologTermEnrichmentProfilesOutput>> res = _checkJob(jobId, retType);
             if (res.getFinished() != 0L)
                 return res.getResult().get(0);
         }
